@@ -47,6 +47,9 @@ final class DisplayFeedService
             timezone: config('app.timezone'),
             usdBrl: $forex['usd_brl'] ?? null,
             eurBrl: $forex['eur_brl'] ?? null,
+            qrUrl: $screen->qr_url,
+            qrLabel: $screen->qr_label,
+            qrCaption: $screen->qr_caption,
         );
     }
 

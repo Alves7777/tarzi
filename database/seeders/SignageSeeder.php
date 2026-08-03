@@ -12,16 +12,49 @@ use App\Models\BillingPlan;
 use App\Models\DisplayScreen;
 use App\Models\Invoice;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 
 class SignageSeeder extends Seeder
 {
     public function run(): void
     {
-        $advertiser = Advertiser::query()->updateOrCreate(
+        $this->copyAssets();
+
+        $tarzi = Advertiser::query()->updateOrCreate(
+            ['email' => 'contato@tarzi.com.br'],
+            [
+                'name' => 'Tarzi Publicidade',
+                'phone' => '(85) 99429-8785',
+                'is_active' => true,
+                'registration_fee_cents' => 9900,
+            ],
+        );
+
+        $sertanus = Advertiser::query()->updateOrCreate(
             ['email' => 'contato@sertanustecnologia.com.br'],
             [
                 'name' => 'Sertanus Tecnologia',
                 'phone' => '(85) 98869-2529',
+                'is_active' => true,
+                'registration_fee_cents' => 9900,
+            ],
+        );
+
+        $lb = Advertiser::query()->updateOrCreate(
+            ['email' => 'contato@lbscontabil.com.br'],
+            [
+                'name' => 'LB Solucoes Contabeis',
+                'phone' => '(85) 99419-1861',
+                'is_active' => true,
+                'registration_fee_cents' => 9900,
+            ],
+        );
+
+        $zeivoll = Advertiser::query()->updateOrCreate(
+            ['email' => 'contato@zeivoll.com.br'],
+            [
+                'name' => 'Zeivoll Tune',
+                'phone' => '(85) 99429-8785',
                 'is_active' => true,
                 'registration_fee_cents' => 9900,
             ],
@@ -34,6 +67,9 @@ class SignageSeeder extends Seeder
                 'location' => 'Fortaleza - CE',
                 'is_active' => true,
                 'carousel_seconds' => 10,
+                'qr_url' => 'https://tune.zeivoll.com.br/ride/22222222-3333-4444-5555-666666666666',
+                'qr_label' => 'Zeivoll Tune',
+                'qr_caption' => 'Escaneie e escolha a musica',
             ],
         );
 
@@ -49,107 +85,185 @@ class SignageSeeder extends Seeder
             ],
         );
 
+        // Limpa anuncios e slots antigos acumulados por seeds anteriores.
+        AdPlacementModel::query()->delete();
+        Advertisement::query()->delete();
+
+        /** 11 anuncios: 10 imagens ativas + 1 video no carrossel principal. */
         $demoAds = [
             [
-                'title' => 'Tarzi — Publicidade em movimento',
+                'advertiser_id' => $tarzi->id,
+                'title' => 'Curiosidade: polvos possuem tres coracoes e sangue azul',
                 'placement' => AdPlacement::MainCarousel,
                 'sort' => 0,
                 'media_type' => AdMediaType::Video,
-                'media_path' => 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-                'duration_seconds' => 25,
+                'media_path' => 'advertisements/curiosidade_animais.webm',
+                'duration_seconds' => 60,
             ],
             [
-                'title' => 'LB Solucoes Contabeis — Motoristas Uber',
+                'advertiser_id' => $zeivoll->id,
+                'title' => 'Zeivoll Tune — O ritmo da sua viagem',
                 'placement' => AdPlacement::MainCarousel,
                 'sort' => 1,
                 'media_type' => AdMediaType::Image,
-                'media_path' => 'advertisements/01_lb_solucoes_contabeis.png',
+                'media_path' => 'advertisements/06_zeivoll_tune.png',
                 'duration_seconds' => 10,
             ],
             [
+                'advertiser_id' => $sertanus->id,
                 'title' => 'Sertanus — Importancia de um site profissional',
                 'placement' => AdPlacement::MainCarousel,
                 'sort' => 2,
                 'media_type' => AdMediaType::Image,
-                'media_path' => 'advertisements/02_sertanus_importancia_site.png',
+                'media_path' => 'advertisements/07_sertanus_site.png',
                 'duration_seconds' => 10,
             ],
             [
-                'title' => 'Sertanus Tecnologia — Desenvolvimento de software',
+                'advertiser_id' => $lb->id,
+                'title' => 'LB Solucoes Contabeis — Seja bem-vindo',
                 'placement' => AdPlacement::MainCarousel,
                 'sort' => 3,
                 'media_type' => AdMediaType::Image,
-                'media_path' => 'advertisements/03_sertanus_contato.png',
+                'media_path' => 'advertisements/09_lb_solucoes.png',
                 'duration_seconds' => 10,
             ],
             [
-                'title' => 'Sertanus — Sites e apps sob medida',
-                'placement' => AdPlacement::Sidebar2,
-                'sort' => 1,
+                'advertiser_id' => $tarzi->id,
+                'title' => 'Tarzi — Anuncie aqui',
+                'placement' => AdPlacement::MainCarousel,
+                'sort' => 4,
                 'media_type' => AdMediaType::Image,
-                'media_path' => 'advertisements/02_sertanus_importancia_site.png',
-                'duration_seconds' => 8,
+                'media_path' => 'advertisements/05_tarzi_anuncie_aqui.png',
+                'duration_seconds' => 10,
             ],
             [
-                'title' => 'Sertanus — @sertanustecnologia',
+                'advertiser_id' => $sertanus->id,
+                'title' => 'Sertanus — Contato e redes sociais',
+                'placement' => AdPlacement::MainCarousel,
+                'sort' => 5,
+                'media_type' => AdMediaType::Image,
+                'media_path' => 'advertisements/08_sertanus_contato.png',
+                'duration_seconds' => 10,
+            ],
+            [
+                'advertiser_id' => $lb->id,
+                'title' => 'LB Solucoes — Bem-vindo',
+                'placement' => AdPlacement::MainCarousel,
+                'sort' => 6,
+                'media_type' => AdMediaType::Image,
+                'media_path' => 'advertisements/04_lb_bem_vindo.png',
+                'duration_seconds' => 10,
+            ],
+            [
+                'advertiser_id' => $lb->id,
+                'title' => 'LB Solucoes — Contato e servicos',
                 'placement' => AdPlacement::Sidebar1,
                 'sort' => 1,
                 'media_type' => AdMediaType::Image,
-                'media_path' => 'advertisements/03_sertanus_contato.png',
-                'duration_seconds' => 8,
+                'media_path' => 'advertisements/03_sidebar_lb_bem_vindo.png',
+                'duration_seconds' => 10,
             ],
             [
+                'advertiser_id' => $sertanus->id,
+                'title' => 'Sertanus Tecnologia — @sertanustecnologia',
+                'placement' => AdPlacement::Sidebar2,
+                'sort' => 1,
+                'media_type' => AdMediaType::Image,
+                'media_path' => 'advertisements/10_sidebar_sertanus.png',
+                'duration_seconds' => 10,
+            ],
+            [
+                'advertiser_id' => $lb->id,
                 'title' => 'LB Solucoes: regularizacao de CPF e abertura de empresas',
                 'placement' => AdPlacement::Footer1,
                 'sort' => 1,
                 'media_type' => AdMediaType::Image,
-                'media_path' => 'advertisements/01_lb_solucoes_contabeis.png',
-                'duration_seconds' => 8,
+                'media_path' => 'advertisements/09_lb_solucoes.png',
+                'duration_seconds' => 10,
             ],
             [
+                'advertiser_id' => $tarzi->id,
                 'title' => 'Fortaleza: feiras e eventos movimentam economia local',
                 'placement' => AdPlacement::Footer2,
                 'sort' => 1,
                 'media_type' => AdMediaType::Image,
-                'media_path' => 'advertisements/02_sertanus_importancia_site.png',
-                'duration_seconds' => 8,
+                'media_path' => 'advertisements/05_tarzi_anuncie_aqui.png',
+                'duration_seconds' => 10,
             ],
         ];
 
         foreach ($demoAds as $demo) {
-            $ad = Advertisement::query()->updateOrCreate(
-                ['title' => $demo['title'], 'advertiser_id' => $advertiser->id],
-                [
-                    'media_type' => $demo['media_type'],
-                    'media_path' => $demo['media_path'],
-                    'duration_seconds' => $demo['duration_seconds'],
-                    'is_active' => true,
-                ],
-            );
+            $advertiserId = $demo['advertiser_id'];
+            unset($demo['advertiser_id']);
 
-            AdPlacementModel::query()->updateOrCreate(
-                [
-                    'advertisement_id' => $ad->id,
-                    'display_screen_id' => $screen->id,
-                    'placement' => $demo['placement'],
-                ],
-                [
-                    'sort_order' => $demo['sort'],
-                    'is_active' => true,
-                    'price_cents' => 4900,
-                ],
-            );
+            $ad = Advertisement::query()->create([
+                'advertiser_id' => $advertiserId,
+                'title' => $demo['title'],
+                'media_type' => $demo['media_type'],
+                'media_path' => $demo['media_path'],
+                'duration_seconds' => $demo['duration_seconds'],
+                'is_active' => true,
+            ]);
+
+            AdPlacementModel::query()->create([
+                'advertisement_id' => $ad->id,
+                'display_screen_id' => $screen->id,
+                'placement' => $demo['placement'],
+                'sort_order' => $demo['sort'],
+                'is_active' => true,
+                'price_cents' => 4900,
+            ]);
         }
 
         Invoice::query()->updateOrCreate(
             ['reference' => 'INV-'.now()->format('Ym').'-001'],
             [
-                'advertiser_id' => $advertiser->id,
-                'description' => 'Cadastro + 8 slots demo (Tarzi poste DOOH)',
-                'amount_cents' => 44200,
+                'advertiser_id' => $sertanus->id,
+                'description' => 'Cadastro + 11 slots demo (Tarzi poste DOOH)',
+                'amount_cents' => 53900,
                 'status' => InvoiceStatus::Pending,
                 'due_at' => now()->addDays(7)->toDateString(),
             ],
         );
+    }
+
+    private function copyAssets(): void
+    {
+        $destination = storage_path('app/public/advertisements');
+        File::ensureDirectoryExists($destination);
+
+        $files = [
+            '03_sidebar_lb_bem_vindo.png',
+            '04_lb_bem_vindo.png',
+            '05_tarzi_anuncie_aqui.png',
+            '06_zeivoll_tune.png',
+            '07_sertanus_site.png',
+            '08_sertanus_contato.png',
+            '09_lb_solucoes.png',
+            '10_sidebar_sertanus.png',
+            'curiosidade_animais.webm',
+        ];
+
+        $flutterAds = realpath(base_path('../zeivoll-display/assets/ads'));
+        $localAds = base_path('storage/app/public/advertisements');
+
+        foreach ($files as $file) {
+            $target = $destination.DIRECTORY_SEPARATOR.$file;
+
+            if (is_file($target)) {
+                continue;
+            }
+
+            $fromFlutter = $flutterAds !== false
+                ? $flutterAds.DIRECTORY_SEPARATOR.$file
+                : null;
+            $fromLocal = $localAds.DIRECTORY_SEPARATOR.$file;
+
+            if ($fromFlutter !== null && is_file($fromFlutter)) {
+                File::copy($fromFlutter, $target);
+            } elseif (is_file($fromLocal)) {
+                File::copy($fromLocal, $target);
+            }
+        }
     }
 }

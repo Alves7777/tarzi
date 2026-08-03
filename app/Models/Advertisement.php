@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Domain\Ads\Enums\AdMediaType;
+use App\Support\YoutubeUrl;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Storage;
 
 class Advertisement extends Model
 {
@@ -40,16 +40,23 @@ class Advertisement extends Model
 
     public function mediaUrl(): string
     {
+        if ($this->media_type === AdMediaType::Youtube) {
+            $videoId = YoutubeUrl::extractVideoId($this->media_path)
+                ?? YoutubeUrl::extractVideoId($this->click_url);
+
+            return $videoId ?? '';
+        }
+
+        if (blank($this->media_path)) {
+            return '';
+        }
+
         if (str_starts_with($this->media_path, 'http://') || str_starts_with($this->media_path, 'https://')) {
             return $this->media_path;
         }
 
-        $relative = Storage::disk('public')->url($this->media_path);
+        $relative = ltrim($this->media_path, '/');
 
-        if (str_starts_with($relative, 'http://') || str_starts_with($relative, 'https://')) {
-            return $relative;
-        }
-
-        return rtrim(config('app.url'), '/').$relative;
+        return rtrim(config('app.url'), '/').'/api/v1/media/'.$relative;
     }
 }

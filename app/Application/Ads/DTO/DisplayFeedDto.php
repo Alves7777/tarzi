@@ -19,6 +19,9 @@ final readonly class DisplayFeedDto
         public string $timezone,
         public ?float $usdBrl,
         public ?float $eurBrl,
+        public ?string $qrUrl,
+        public ?string $qrLabel,
+        public ?string $qrCaption,
     ) {}
 
     /** @return array<string, mixed> */
@@ -43,6 +46,9 @@ final readonly class DisplayFeedDto
                 'timezone' => $this->timezone,
                 'usd_brl' => $this->usdBrl,
                 'eur_brl' => $this->eurBrl,
+                'qr_url' => $this->qrUrl,
+                'qr_label' => $this->qrLabel,
+                'qr_caption' => $this->qrCaption,
             ],
         ];
     }

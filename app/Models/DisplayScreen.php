@@ -14,6 +14,9 @@ class DisplayScreen extends Model
         'location',
         'is_active',
         'carousel_seconds',
+        'qr_url',
+        'qr_label',
+        'qr_caption',
     ];
 
     protected function casts(): array
