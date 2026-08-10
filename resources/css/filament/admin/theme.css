@@ -1,0 +1,800 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../resources/views/livewire/**/*';
+@source '../../../../vendor/bezhansalleh/filament-language-switch/resources/views/**/*.blade.php';
+
+/*
+ * Panel chrome.
+ *
+ * Everything below builds on Filament's own design tokens (--gray-*,
+ * --primary-*, --spacing) rather than fixed values, so the UI switcher can keep
+ * changing the primary colour, the text size and the density at runtime.
+ */
+
+/* ---------------------------------------------------------------- sidebar */
+
+.fi-sidebar {
+    background-color: var(--gray-50);
+    border-inline-end: 1px solid var(--gray-200);
+}
+
+.fi-sidebar:where(.dark, .dark *) {
+    background-color: color-mix(in oklab, var(--gray-950) 60%, black);
+    border-color: color-mix(in oklab, var(--gray-800) 70%, transparent);
+}
+
+.fi-sidebar-header {
+    background-color: transparent;
+    border-inline-end: 0;
+    box-shadow: none;
+    border-block-end: 1px solid var(--gray-200);
+}
+
+.fi-sidebar-header:where(.dark, .dark *) {
+    border-color: color-mix(in oklab, var(--gray-800) 70%, transparent);
+}
+
+/* Filament's own inline padding is kept: it is what centres the icons once
+   the sidebar collapses to a single column. */
+.fi-sidebar-nav {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray-300) transparent;
+}
+
+.fi-sidebar-nav:where(.dark, .dark *) {
+    scrollbar-color: var(--gray-700) transparent;
+}
+
+/* Group headings read as quiet section dividers, not as clickable items. */
+.fi-sidebar-group-label {
+    font-size: calc(var(--text-xs) * 0.92);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+}
+
+.fi-sidebar-group-label:where(.dark, .dark *) {
+    color: var(--gray-500);
+}
+
+.fi-sidebar-item-btn {
+    position: relative;
+    border-radius: 0.625rem;
+    background-color: transparent;
+    font-weight: 500;
+    transition:
+        background-color 100ms ease,
+        color 100ms ease;
+}
+
+.fi-sidebar-item:not(.fi-active) .fi-sidebar-item-btn:hover {
+    background-color: var(--gray-200);
+}
+
+.fi-sidebar-item:not(.fi-active) .fi-sidebar-item-btn:where(.dark, .dark *):hover {
+    background-color: color-mix(in oklab, var(--color-white) 6%, transparent);
+}
+
+/* The active entry gets a tinted pill plus an accent bar on the leading edge. */
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    background-color: color-mix(in oklab, var(--primary-500) 12%, transparent);
+    color: var(--primary-700);
+    font-weight: 600;
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn:where(.dark, .dark *) {
+    background-color: color-mix(in oklab, var(--primary-400) 16%, transparent);
+    color: var(--primary-200);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block: 20%;
+    width: 3px;
+    border-start-end-radius: 3px;
+    border-end-end-radius: 3px;
+    background-color: var(--primary-500);
+}
+
+.fi-sidebar-item-btn .fi-icon {
+    color: var(--gray-400);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn .fi-icon {
+    color: var(--primary-600);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn:where(.dark, .dark *) .fi-icon {
+    color: var(--primary-300);
+}
+
+/* ----------------------------------------------------------------- topbar */
+
+nav.fi-topbar {
+    background-color: color-mix(in oklab, var(--color-white) 80%, transparent);
+    backdrop-filter: blur(12px);
+    border-block-end: 1px solid var(--gray-200);
+    box-shadow: none;
+}
+
+nav.fi-topbar:where(.dark, .dark *) {
+    background-color: color-mix(in oklab, var(--gray-900) 80%, transparent);
+    border-color: color-mix(in oklab, var(--gray-800) 70%, transparent);
+}
+
+/*
+ * The topbar spans the whole width, above the sidebar, so its leading block can
+ * be made to mirror the sidebar column: the logo sits over the sidebar and the
+ * collapse control lands exactly on the sidebar's edge.
+ *
+ * This only applies while the sidebar is expanded. Collapsed it is 4.5rem wide,
+ * which cannot hold a wordmark, so the block falls back to Filament's own
+ * layout and hugs its content instead of leaving a gap that lines up with
+ * nothing. `:has()` reads the state from the sidebar's own class, and the width
+ * transition matches the sidebar's so the two move together.
+ */
+@media (min-width: 64rem) {
+    .fi-body-has-navigation:not(.fi-body-has-top-navigation) .fi-topbar-start {
+        transition: width 150ms ease;
+    }
+
+    .fi-body-has-navigation:not(.fi-body-has-top-navigation):has(.fi-sidebar-open) .fi-topbar-start {
+        /* The topbar's own inline padding offsets this block from x=0, so that
+           much has to come off the sidebar width for the trailing border to
+           land on the sidebar's edge. Both use --spacing, so the two stay
+           aligned at any density the UI switcher is set to. */
+        width: calc(var(--sidebar-width) - var(--spacing) * 4);
+        flex-shrink: 0;
+        box-sizing: border-box;
+        padding-inline-end: calc(var(--spacing) * 2);
+        margin-inline-end: calc(var(--spacing) * 4);
+        border-inline-end: 1px solid var(--gray-200);
+    }
+
+    .fi-body-has-navigation:not(.fi-body-has-top-navigation):has(.fi-sidebar-open)
+        .fi-topbar-start:where(.dark, .dark *) {
+        border-color: color-mix(in oklab, var(--gray-800) 70%, transparent);
+    }
+
+    /* Logo first, collapse control pinned to the end of the reserved block. */
+    .fi-body-has-navigation:not(.fi-body-has-top-navigation):has(.fi-sidebar-open)
+        .fi-topbar-start
+        > :not(.fi-topbar-collapse-sidebar-btn-ctn) {
+        order: 1;
+    }
+
+    .fi-body-has-navigation:not(.fi-body-has-top-navigation):has(.fi-sidebar-open)
+        .fi-topbar-start
+        > .fi-topbar-collapse-sidebar-btn-ctn {
+        order: 2;
+        margin-inline-start: auto;
+    }
+}
+
+/* ------------------------------------------------------------- page header */
+
+.fi-header-heading {
+    letter-spacing: -0.02em;
+}
+
+.fi-header-subheading {
+    color: var(--gray-500);
+}
+
+.fi-header-subheading:where(.dark, .dark *) {
+    color: var(--gray-400);
+}
+
+/* --------------------------------------------------------------- surfaces */
+
+.fi-section,
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat {
+    border-radius: 0.875rem;
+    box-shadow:
+        0 1px 2px 0 rgb(0 0 0 / 0.04),
+        0 1px 3px 0 rgb(0 0 0 / 0.04);
+}
+
+.fi-section:where(.dark, .dark *),
+.fi-ta-ctn:where(.dark, .dark *),
+.fi-wi-stats-overview-stat:where(.dark, .dark *) {
+    box-shadow: none;
+}
+
+.fi-section-header-heading {
+    letter-spacing: -0.01em;
+}
+
+/* Stat cards lift slightly on hover, which reads as "this is a live figure". */
+.fi-wi-stats-overview-stat {
+    transition:
+        transform 120ms ease,
+        box-shadow 120ms ease;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    transform: translateY(-1px);
+    box-shadow:
+        0 2px 4px 0 rgb(0 0 0 / 0.05),
+        0 4px 10px -2px rgb(0 0 0 / 0.06);
+}
+
+/* ----------------------------------------------------------------- tables */
+
+.fi-ta-header-cell {
+    font-size: calc(var(--text-xs) * 0.95);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    background-color: var(--gray-50);
+}
+
+.fi-ta-header-cell:where(.dark, .dark *) {
+    color: var(--gray-400);
+    background-color: color-mix(in oklab, var(--color-white) 3%, transparent);
+}
+
+.fi-ta-row {
+    transition: background-color 75ms ease;
+}
+
+.fi-ta-row:hover {
+    background-color: var(--gray-50);
+}
+
+.fi-ta-row:where(.dark, .dark *):hover {
+    background-color: color-mix(in oklab, var(--color-white) 3%, transparent);
+}
+
+/* ------------------------------------------------------------- scrollbars */
+
+.fi-main-ctn {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray-300) transparent;
+}
+
+.fi-main-ctn:where(.dark, .dark *) {
+    scrollbar-color: var(--gray-700) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 0.625rem;
+    height: 0.625rem;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+    background-color: var(--gray-300);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--gray-400);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background-color: var(--gray-700);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--gray-600);
+}
+
+/* ------------------------------------------------------- ui switcher */
+
+/*
+ * The slide-over that lets each user restyle the panel. Built on Filament's
+ * design tokens so it follows the primary colour and density it is changing.
+ */
+.uisw-header {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 2);
+}
+
+.uisw-header .fi-icon,
+.uisw-reset .fi-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.uisw-reset .fi-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.uisw-header-heading {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--gray-950);
+}
+
+.dark .uisw-header-heading {
+    color: #fff;
+}
+
+.uisw-reset {
+    margin-inline-start: auto;
+    margin-inline-end: calc(var(--spacing) * 8);
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 1.5);
+    border-radius: var(--radius-lg, 0.5rem);
+    padding: calc(var(--spacing) * 1) calc(var(--spacing) * 2);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: color 75ms ease, background-color 75ms ease;
+}
+
+.uisw-reset:hover {
+    color: var(--gray-700);
+    background-color: var(--gray-50);
+}
+
+.dark .uisw-reset:hover {
+    color: var(--gray-200);
+    background-color: var(--gray-800);
+}
+
+.uisw-sections {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing) * 7);
+}
+
+.uisw-section-title {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 1.5);
+    margin-bottom: calc(var(--spacing) * 3);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.dark .uisw-section-title {
+    color: var(--gray-300);
+}
+
+.uisw-section-title .fi-icon {
+    width: 1rem;
+    height: 1rem;
+    color: var(--gray-400);
+}
+
+.uisw-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: calc(var(--spacing) * 2);
+}
+
+.uisw-grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.uisw-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--spacing) * 2);
+    padding: calc(var(--spacing) * 3);
+    border-radius: var(--radius-lg, 0.5rem);
+    border: 1px solid var(--gray-200);
+    background-color: transparent;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: border-color 75ms ease, background-color 75ms ease;
+}
+
+.dark .uisw-option {
+    border-color: var(--gray-700);
+    color: var(--gray-300);
+}
+
+.uisw-option:hover {
+    border-color: var(--primary-400);
+}
+
+.uisw-option[aria-pressed='true'] {
+    border-color: var(--primary-600);
+    background-color: var(--primary-50);
+    color: var(--primary-700);
+}
+
+.dark .uisw-option[aria-pressed='true'] {
+    border-color: var(--primary-500);
+    background-color: color-mix(in oklab, var(--primary-500) 15%, transparent);
+    color: var(--primary-300);
+}
+
+.uisw-option-sample {
+    font-size: var(--text-2xl);
+    line-height: 1;
+}
+
+/* Miniature of each navigation layout. */
+.uisw-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 3.5rem;
+}
+
+.uisw-preview-row {
+    display: flex;
+    gap: 2px;
+}
+
+.uisw-preview-bar,
+.uisw-preview-nav,
+.uisw-preview-body {
+    border-radius: 2px;
+    background-color: var(--gray-300);
+}
+
+.dark .uisw-preview-bar,
+.dark .uisw-preview-nav,
+.dark .uisw-preview-body {
+    background-color: var(--gray-600);
+}
+
+.uisw-preview-bar {
+    height: 5px;
+    width: 100%;
+}
+
+.uisw-preview-nav {
+    height: 1.75rem;
+    width: 0.875rem;
+}
+
+.uisw-preview-nav-narrow {
+    width: 0.375rem;
+}
+
+.uisw-preview-body {
+    height: 1.75rem;
+    flex: 1 1 0%;
+    background-color: var(--gray-200);
+}
+
+.dark .uisw-preview-body {
+    background-color: var(--gray-700);
+}
+
+.uisw-option[aria-pressed='true'] .uisw-preview-bar,
+.uisw-option[aria-pressed='true'] .uisw-preview-nav {
+    background-color: var(--primary-500);
+}
+
+.uisw-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--spacing) * 2);
+}
+
+.uisw-swatch {
+    position: relative;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-lg, 0.5rem);
+    cursor: pointer;
+    transition: transform 75ms ease;
+}
+
+.uisw-swatch:hover {
+    transform: scale(1.08);
+}
+
+.uisw-swatch[aria-pressed='true'] {
+    box-shadow: 0 0 0 2px var(--gray-50), 0 0 0 4px var(--gray-400);
+}
+
+.dark .uisw-swatch[aria-pressed='true'] {
+    box-shadow: 0 0 0 2px var(--gray-900), 0 0 0 4px var(--gray-500);
+}
+
+.uisw-swatch-check {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #fff;
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.35));
+}
+
+.uisw-slider-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: calc(var(--spacing) * 3);
+    font-size: var(--text-xs);
+    color: var(--gray-500);
+}
+
+.uisw-slider-value {
+    border-radius: var(--radius-md, 0.375rem);
+    background-color: var(--gray-100);
+    padding: calc(var(--spacing) * 1) calc(var(--spacing) * 2);
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.dark .uisw-slider-value {
+    background-color: var(--gray-800);
+    color: var(--gray-200);
+}
+
+.uisw-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    height: 6px;
+    border-radius: 9999px;
+    background-color: var(--gray-200);
+    outline: none;
+    cursor: pointer;
+}
+
+.dark .uisw-slider {
+    background-color: var(--gray-700);
+}
+
+.uisw-footer {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    gap: calc(var(--spacing) * 2);
+}
+
+.uisw-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    border: 3px solid #fff;
+    background-color: var(--primary-600);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+    cursor: pointer;
+}
+
+.uisw-slider::-moz-range-thumb {
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    border: 3px solid #fff;
+    background-color: var(--primary-600);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+    cursor: pointer;
+}
+
+.dark .uisw-slider::-webkit-slider-thumb,
+.dark .uisw-slider::-moz-range-thumb {
+    border-color: var(--gray-900);
+    background-color: var(--primary-500);
+}
+
+/* ------------------------------------------------------ login screen */
+
+/*
+ * Split login screen. Filament's simple layout is a centred column; when the
+ * side panel is rendered (which the global settings decide), it becomes two
+ * columns and the form loses its card so it reads as one continuous screen.
+ *
+ * Everything is driven by --primary-*, so the panel and its illustration follow
+ * the colour chosen in the settings page.
+ */
+.filogin-aside {
+    display: none;
+    order: 2;
+    flex: 1 1 50%;
+    align-items: center;
+    justify-content: center;
+    padding: calc(var(--spacing) * 10);
+    background-color: var(--primary-600);
+    color: #fff;
+}
+
+/* Moves the panel ahead of the form for the "form on the right" layout. */
+.filogin-aside-start {
+    order: 0;
+}
+
+.filogin-aside-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--spacing) * 8);
+    width: 100%;
+    max-width: 30rem;
+    text-align: center;
+}
+
+.filogin-illustration {
+    width: 100%;
+    height: auto;
+}
+
+.filogin-aside-copy {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing) * 2);
+}
+
+.filogin-aside-heading {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+}
+
+.filogin-aside-subheading {
+    font-size: var(--text-sm);
+    color: color-mix(in oklab, #fff 80%, transparent);
+}
+
+/* The panel only exists on the login screen, so `:has()` scopes every override
+   below to it without touching the other simple pages. */
+@media (min-width: 64rem) {
+    .fi-simple-layout:has(.filogin-aside) {
+        flex-direction: row;
+        align-items: stretch;
+    }
+
+    .fi-simple-layout:has(.filogin-aside) .fi-simple-main-ctn {
+        order: 1;
+        flex: 1 1 50%;
+        padding-inline: calc(var(--spacing) * 6);
+    }
+
+    .fi-simple-layout:has(.filogin-aside) .fi-simple-main {
+        background-color: transparent;
+        box-shadow: none;
+        padding-inline: 0;
+    }
+
+    .filogin-aside {
+        display: flex;
+    }
+}
+
+/* ---------------------------------------------- login layout previews */
+
+/* Miniature of each login layout, shown on the settings page. */
+.filogin-preview {
+    display: flex;
+    overflow: hidden;
+    width: 4.5rem;
+    height: 2.75rem;
+    border-radius: 4px;
+    background-color: var(--gray-100);
+}
+
+.dark .filogin-preview {
+    background-color: var(--gray-800);
+}
+
+.filogin-preview-panel {
+    width: 50%;
+    background-color: var(--primary-500);
+}
+
+/* The panel is rendered first, so only the "form on the left" preview has to
+   move it to the other side. */
+.filogin-preview-left .filogin-preview-panel {
+    order: 2;
+}
+
+.filogin-preview-form {
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding-inline: 6px;
+}
+
+.filogin-preview-default .filogin-preview-form {
+    padding-inline: 18px;
+}
+
+.filogin-preview-line {
+    height: 3px;
+    border-radius: 2px;
+    background-color: var(--gray-300);
+}
+
+.dark .filogin-preview-line {
+    background-color: var(--gray-600);
+}
+
+.filogin-preview-line-cta {
+    background-color: var(--primary-400);
+}
+
+/* ------------------------------------------------ browser sessions */
+
+/* The session list inside the profile page. */
+.uisess-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.uisess-row {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 3);
+    padding: calc(var(--spacing) * 3) 0;
+    border-top: 1px solid var(--gray-200);
+}
+
+.dark .uisess-row {
+    border-color: var(--gray-700);
+}
+
+.uisess-row:first-child {
+    border-top: 0;
+}
+
+.uisess-icon {
+    color: var(--gray-400);
+    flex-shrink: 0;
+}
+
+.uisess-icon .fi-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.uisess-details {
+    min-width: 0;
+    flex: 1 1 0%;
+}
+
+.uisess-device {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 2);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--gray-950);
+}
+
+.dark .uisess-device {
+    color: #fff;
+}
+
+.uisess-meta {
+    margin-top: calc(var(--spacing) * 0.5);
+    font-size: var(--text-xs);
+    color: var(--gray-500);
+}
+
+.uisess-actions {
+    flex-shrink: 0;
+}
+
+.uisess-footer {
+    margin-top: calc(var(--spacing) * 4);
+}

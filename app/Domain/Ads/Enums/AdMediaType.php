@@ -12,7 +12,7 @@ enum AdMediaType: string
     {
         return match ($this) {
             self::Image => 'Imagem',
-            self::Video => 'Video',
+            self::Video => 'Vídeo',
             self::Youtube => 'YouTube',
         };
     }

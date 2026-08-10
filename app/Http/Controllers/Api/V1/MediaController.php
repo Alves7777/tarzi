@@ -10,6 +10,10 @@ final class MediaController extends Controller
 {
     public function show(string $path): BinaryFileResponse|Response
     {
+        if (request()->isMethod('OPTIONS')) {
+            return response('', 204, $this->corsHeaders());
+        }
+
         $path = str_replace(['..', '\\'], ['', '/'], $path);
         $fullPath = storage_path('app/public/'.$path);
 
@@ -17,10 +21,18 @@ final class MediaController extends Controller
             abort(404);
         }
 
-        return response()->file($fullPath, [
+        return response()->file($fullPath, array_merge($this->corsHeaders(), [
+            'Cache-Control' => 'public, max-age=3600',
+        ]));
+    }
+
+    /** @return array<string, string> */
+    private function corsHeaders(): array
+    {
+        return [
             'Access-Control-Allow-Origin' => '*',
             'Access-Control-Allow-Methods' => 'GET, HEAD, OPTIONS',
-            'Cache-Control' => 'public, max-age=3600',
-        ]);
+            'Access-Control-Allow-Headers' => 'ngrok-skip-browser-warning, Accept, Content-Type, Authorization',
+        ];
     }
 }

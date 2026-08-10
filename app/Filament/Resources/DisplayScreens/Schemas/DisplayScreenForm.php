@@ -26,7 +26,7 @@ class DisplayScreenForm
                     ->numeric()
                     ->default(8),
                 Section::make('QR Code fixo')
-                    ->description('Link generico escaneado no display: PIX, Tune, site ou qualquer URL.')
+                    ->description('Link genérico escaneado no display: PIX, Tune, site ou qualquer URL.')
                     ->schema([
                         TextInput::make('qr_url')
                             ->label('URL do QR Code')
@@ -34,12 +34,12 @@ class DisplayScreenForm
                             ->url()
                             ->maxLength(2048),
                         TextInput::make('qr_label')
-                            ->label('Titulo')
+                            ->label('Título')
                             ->placeholder('PIX / Zeivoll Tune / Promo')
                             ->maxLength(80),
                         TextInput::make('qr_caption')
-                            ->label('Subtitulo')
-                            ->placeholder('Escaneie para pagar / ouvir musica')
+                            ->label('Subtítulo')
+                            ->placeholder('Escaneie para pagar / ouvir música')
                             ->maxLength(120),
                     ])
                     ->columns(1),

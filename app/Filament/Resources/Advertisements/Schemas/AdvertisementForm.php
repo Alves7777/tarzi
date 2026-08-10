@@ -33,7 +33,7 @@ class AdvertisementForm
                     ->required()
                     ->live(),
                 Placeholder::make('media_preview')
-                    ->label('Midia atual')
+                    ->label('Mídia atual')
                     ->content(function (?Advertisement $record): HtmlString|string {
                         if ($record === null) {
                             return 'Nenhum arquivo cadastrado.';
@@ -44,7 +44,7 @@ class AdvertisementForm
 
                             return new HtmlString(
                                 '<a href="https://www.youtube.com/watch?v='.e($videoId).'" target="_blank" rel="noopener" class="text-primary-500 underline">'
-                                .'Abrir video no YouTube ('.e($videoId).')'
+                                .'Abrir vídeo no YouTube ('.e($videoId).')'
                                 .'</a>'
                             );
                         }
@@ -57,7 +57,7 @@ class AdvertisementForm
 
                         if ($record->media_type === AdMediaType::Video) {
                             return new HtmlString(
-                                '<a href="'.$url.'" target="_blank" rel="noopener" class="text-primary-500 underline">Abrir video atual</a>'
+                                '<a href="'.$url.'" target="_blank" rel="noopener" class="text-primary-500 underline">Abrir vídeo atual</a>'
                             );
                         }
 
@@ -73,7 +73,7 @@ class AdvertisementForm
                 TextInput::make('youtube_url')
                     ->label('Link do YouTube')
                     ->placeholder('https://youtu.be/... ou https://www.youtube.com/watch?v=...')
-                    ->helperText('Cole o link do video. Upload de arquivo nao e necessario para YouTube.')
+                    ->helperText('Cole o link do vídeo. Upload de arquivo não é necessário para YouTube.')
                     ->url()
                     ->visible(fn (Get $get): bool => self::isMediaType($get, AdMediaType::Video, AdMediaType::Youtube))
                     ->required(fn (Get $get, ?Advertisement $record): bool => self::requiresYoutubeUrl($get, $record))
@@ -91,7 +91,7 @@ class AdvertisementForm
                     }),
                 FileUpload::make('media_path')
                     ->label('Upload de arquivo')
-                    ->helperText('Carrossel: 1920x1080 px · Lateral: 1080x500 px · JPG/PNG ou MP4 · Max 2 MB por limite do PHP.')
+                    ->helperText('Carrossel: 1920×1080 px · Lateral: 1080×500 px · JPG/PNG ou MP4 · Máx. 2 MB (limite do PHP).')
                     ->disk('public')
                     ->directory('advertisements')
                     ->visibility('public')
@@ -106,8 +106,8 @@ class AdvertisementForm
                     ->dehydrated(fn (Get $get): bool => ! self::isMediaType($get, AdMediaType::Youtube))
                     ->required(fn (?Advertisement $record, Get $get): bool => self::requiresFileUpload($get, $record)),
                 TextInput::make('click_url')
-                    ->label('Click url')
-                    ->helperText('Destino ao clicar no anuncio (opcional).')
+                    ->label('URL de clique')
+                    ->helperText('Destino ao clicar no anúncio (opcional).')
                     ->url()
                     ->visible(fn (Get $get): bool => ! self::isMediaType($get, AdMediaType::Youtube)),
                 TextInput::make('duration_seconds')
@@ -138,7 +138,7 @@ class AdvertisementForm
                     ->label('Ordem no slot')
                     ->numeric()
                     ->default(0)
-                    ->helperText('0 = primeiro. Videos/YouTube costumam ficar em 0.')
+                    ->helperText('0 = primeiro. Vídeos/YouTube costumam ficar em 0.')
                     ->dehydrated(false)
                     ->visible(fn (?Advertisement $record): bool => $record === null),
             ]);

@@ -18,8 +18,8 @@ enum AdPlacement: string
             self::Sidebar1 => 'Lateral 1 (inferior)',
             self::Sidebar2 => 'Lateral 2 (meio)',
             self::Sidebar3 => 'Lateral 3 (superior)',
-            self::Footer1 => 'Rodape 1',
-            self::Footer2 => 'Rodape 2',
+            self::Footer1 => 'Rodapé 1',
+            self::Footer2 => 'Rodapé 2',
         };
     }
 
