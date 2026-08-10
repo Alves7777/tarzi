@@ -18,7 +18,7 @@ class AdvertisersTable
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Endereço de e-mail')
                     ->searchable(),
                 TextColumn::make('phone')
                     ->searchable(),

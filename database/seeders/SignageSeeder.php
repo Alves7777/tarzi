@@ -43,7 +43,7 @@ class SignageSeeder extends Seeder
         $lb = Advertiser::query()->updateOrCreate(
             ['email' => 'contato@lbscontabil.com.br'],
             [
-                'name' => 'LB Solucoes Contabeis',
+                'name' => 'LB Soluções Contábeis',
                 'phone' => '(85) 99419-1861',
                 'is_active' => true,
                 'registration_fee_cents' => 9900,
@@ -69,15 +69,15 @@ class SignageSeeder extends Seeder
                 'carousel_seconds' => 10,
                 'qr_url' => 'https://tune.zeivoll.com.br/ride/22222222-3333-4444-5555-666666666666',
                 'qr_label' => 'Zeivoll Tune',
-                'qr_caption' => 'Escaneie e escolha a musica',
+                'qr_caption' => 'Escaneie e escolha a música',
             ],
         );
 
         BillingPlan::query()->updateOrCreate(
             ['slug' => 'basico'],
             [
-                'name' => 'Plano Basico',
-                'description' => 'Cadastro + slots de anuncio avulsos',
+                'name' => 'Plano Básico',
+                'description' => 'Cadastro + slots de anúncio avulsos',
                 'monthly_price_cents' => 19900,
                 'ad_slot_price_cents' => 4900,
                 'registration_fee_cents' => 9900,
@@ -85,15 +85,15 @@ class SignageSeeder extends Seeder
             ],
         );
 
-        // Limpa anuncios e slots antigos acumulados por seeds anteriores.
+        // Limpa anúncios e slots antigos acumulados por seeds anteriores.
         AdPlacementModel::query()->delete();
         Advertisement::query()->delete();
 
-        /** 11 anuncios: 10 imagens ativas + 1 video no carrossel principal. */
+        /** 11 anúncios: 10 imagens ativas + 1 vídeo no carrossel principal. */
         $demoAds = [
             [
                 'advertiser_id' => $tarzi->id,
-                'title' => 'Curiosidade: polvos possuem tres coracoes e sangue azul',
+                'title' => 'Curiosidade: polvos possuem três corações e sangue azul',
                 'placement' => AdPlacement::MainCarousel,
                 'sort' => 0,
                 'media_type' => AdMediaType::Video,
@@ -111,7 +111,7 @@ class SignageSeeder extends Seeder
             ],
             [
                 'advertiser_id' => $sertanus->id,
-                'title' => 'Sertanus — Importancia de um site profissional',
+                'title' => 'Sertanus — Importância de um site profissional',
                 'placement' => AdPlacement::MainCarousel,
                 'sort' => 2,
                 'media_type' => AdMediaType::Image,
@@ -120,7 +120,7 @@ class SignageSeeder extends Seeder
             ],
             [
                 'advertiser_id' => $lb->id,
-                'title' => 'LB Solucoes Contabeis — Seja bem-vindo',
+                'title' => 'LB Soluções Contábeis — Seja bem-vindo',
                 'placement' => AdPlacement::MainCarousel,
                 'sort' => 3,
                 'media_type' => AdMediaType::Image,
@@ -147,7 +147,7 @@ class SignageSeeder extends Seeder
             ],
             [
                 'advertiser_id' => $lb->id,
-                'title' => 'LB Solucoes — Bem-vindo',
+                'title' => 'LB Soluções — Bem-vindo',
                 'placement' => AdPlacement::MainCarousel,
                 'sort' => 6,
                 'media_type' => AdMediaType::Image,
@@ -156,7 +156,7 @@ class SignageSeeder extends Seeder
             ],
             [
                 'advertiser_id' => $lb->id,
-                'title' => 'LB Solucoes — Contato e servicos',
+                'title' => 'LB Soluções — Contato e serviços',
                 'placement' => AdPlacement::Sidebar1,
                 'sort' => 1,
                 'media_type' => AdMediaType::Image,
@@ -174,7 +174,7 @@ class SignageSeeder extends Seeder
             ],
             [
                 'advertiser_id' => $lb->id,
-                'title' => 'LB Solucoes: regularizacao de CPF e abertura de empresas',
+                'title' => 'LB Soluções: regularização de CPF e abertura de empresas',
                 'placement' => AdPlacement::Footer1,
                 'sort' => 1,
                 'media_type' => AdMediaType::Image,

@@ -15,7 +15,7 @@ class AdvertiserForm
                 TextInput::make('name')
                     ->required(),
                 TextInput::make('email')
-                    ->label('Email address')
+                    ->label('Endereço de e-mail')
                     ->email()
                     ->required(),
                 TextInput::make('phone')

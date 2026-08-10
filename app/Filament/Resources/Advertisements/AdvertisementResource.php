@@ -20,11 +20,11 @@ class AdvertisementResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Anuncios';
+    protected static string|\UnitEnum|null $navigationGroup = 'Anúncios';
 
-    protected static ?string $navigationLabel = 'Anuncios';
+    protected static ?string $navigationLabel = 'Anúncios';
 
-    protected static ?string $modelLabel = 'Anuncio';
+    protected static ?string $modelLabel = 'Anúncio';
 
     public static function form(Schema $schema): Schema
     {
