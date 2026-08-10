@@ -1,4 +1,4 @@
-# Zeivoll Signage
+# TARZI
 
 Plataforma **DOOH (Digital Out-of-Home)** para gerenciar anúncios em telas de elevador e postes. Painel Laravel + Filament; player Flutter (`zeivoll-display`) consome a API de layout.
 
