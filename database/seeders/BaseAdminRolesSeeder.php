@@ -28,6 +28,11 @@ class BaseAdminRolesSeeder extends Seeder
             'guard_name' => $guard,
         ]);
 
+        Role::firstOrCreate([
+            'name' => 'advertiser',
+            'guard_name' => $guard,
+        ]);
+
         $permissions = Permission::query()
             ->where('guard_name', $guard)
             ->get();

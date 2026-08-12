@@ -20,7 +20,7 @@ class AdvertiserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Anuncios';
+    protected static string|\UnitEnum|null $navigationGroup = 'Anúncios';
 
     protected static ?string $navigationLabel = 'Anunciantes';
 

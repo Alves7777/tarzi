@@ -6,6 +6,7 @@ use App\Application\Ads\DTO\AdItemDto;
 use App\Application\Ads\DTO\DisplayFeedDto;
 use App\Application\Widgets\Services\ForexRateService;
 use App\Domain\Ads\Enums\AdPlacement as AdPlacementEnum;
+use App\Domain\Ads\Enums\AdvertisementStatus;
 use App\Models\AdPlacement;
 use App\Models\Advertisement;
 use App\Models\DisplayScreen;
@@ -15,6 +16,7 @@ final class DisplayFeedService
 {
     public function __construct(
         private readonly ForexRateService $forexRateService,
+        private readonly CarouselPlaylistBuilder $playlistBuilder,
     ) {}
 
     public function buildForScreen(DisplayScreen $screen): DisplayFeedDto
@@ -31,13 +33,17 @@ final class DisplayFeedService
 
         $grouped = $placements->groupBy(fn (AdPlacement $p) => $p->placement->value);
 
+        $carouselAds = $this->approvedAdvertisements(
+            $grouped->get(AdPlacementEnum::MainCarousel->value, collect()),
+        );
+
         $forex = $this->forexRateService->getRates();
 
         return new DisplayFeedDto(
             screenUuid: $screen->uuid,
             screenName: $screen->name,
             carouselSeconds: $screen->carousel_seconds,
-            mainCarousel: $this->mapMany($grouped->get(AdPlacementEnum::MainCarousel->value, collect())),
+            mainCarousel: $this->playlistBuilder->build($screen, $carouselAds),
             sidebar1: $this->mapSingle($grouped->get(AdPlacementEnum::Sidebar1->value, collect())),
             sidebar2: $this->mapSingle($grouped->get(AdPlacementEnum::Sidebar2->value, collect())),
             sidebar3: $this->mapSingle($grouped->get(AdPlacementEnum::Sidebar3->value, collect())),
@@ -50,15 +56,23 @@ final class DisplayFeedService
             qrUrl: $screen->qr_url,
             qrLabel: $screen->qr_label,
             qrCaption: $screen->qr_caption,
+            adsBeforeVideo: (int) $screen->ads_before_video,
+            videoSegmentSeconds: (int) $screen->video_segment_seconds,
+            screenFormat: $screen->format->value,
+            screenWidthPx: (int) $screen->width_px,
+            screenHeightPx: (int) $screen->height_px,
         );
     }
 
-    /** @param Collection<int, AdPlacement> $placements */
-    private function mapMany(Collection $placements): array
+    /**
+     * @param  Collection<int, AdPlacement>  $placements
+     * @return list<Advertisement>
+     */
+    private function approvedAdvertisements(Collection $placements): array
     {
         return $placements
-            ->map(fn (AdPlacement $placement) => $this->toDto($placement->advertisement))
-            ->filter()
+            ->map(fn (AdPlacement $placement) => $placement->advertisement)
+            ->filter(fn (?Advertisement $ad) => $this->isPublishable($ad))
             ->values()
             ->all();
     }
@@ -77,7 +91,7 @@ final class DisplayFeedService
 
     private function toDto(?Advertisement $advertisement): ?AdItemDto
     {
-        if ($advertisement === null || ! $advertisement->is_active) {
+        if (! $this->isPublishable($advertisement)) {
             return null;
         }
 
@@ -89,5 +103,14 @@ final class DisplayFeedService
             clickUrl: $advertisement->click_url,
             durationSeconds: $advertisement->duration_seconds,
         );
+    }
+
+    private function isPublishable(?Advertisement $advertisement): bool
+    {
+        if ($advertisement === null || ! $advertisement->is_active) {
+            return false;
+        }
+
+        return $advertisement->status === AdvertisementStatus::Approved;
     }
 }

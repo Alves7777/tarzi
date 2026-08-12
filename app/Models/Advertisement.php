@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Domain\Ads\Enums\AdMediaType;
+use App\Domain\Ads\Enums\AdvertisementStatus;
+use App\Support\AdvertisementMedia;
 use App\Support\YoutubeUrl;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,14 +19,23 @@ class Advertisement extends Model
         'media_path',
         'click_url',
         'duration_seconds',
+        'video_total_seconds',
         'is_active',
+        'status',
+        'submitted_at',
+        'reviewed_at',
+        'reviewed_by',
+        'rejection_reason',
     ];
 
     protected function casts(): array
     {
         return [
             'media_type' => AdMediaType::class,
+            'status' => AdvertisementStatus::class,
             'is_active' => 'boolean',
+            'submitted_at' => 'datetime',
+            'reviewed_at' => 'datetime',
         ];
     }
 
@@ -36,6 +47,16 @@ class Advertisement extends Model
     public function placements(): HasMany
     {
         return $this->hasMany(AdPlacement::class);
+    }
+
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function isPublishable(): bool
+    {
+        return $this->is_active && $this->status === AdvertisementStatus::Approved;
     }
 
     public function mediaUrl(): string
@@ -51,12 +72,6 @@ class Advertisement extends Model
             return '';
         }
 
-        if (str_starts_with($this->media_path, 'http://') || str_starts_with($this->media_path, 'https://')) {
-            return $this->media_path;
-        }
-
-        $relative = ltrim($this->media_path, '/');
-
-        return rtrim(config('app.url'), '/').'/api/v1/media/'.$relative;
+        return AdvertisementMedia::url($this->media_path);
     }
 }

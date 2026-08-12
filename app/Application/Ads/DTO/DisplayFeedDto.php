@@ -22,6 +22,11 @@ final readonly class DisplayFeedDto
         public ?string $qrUrl,
         public ?string $qrLabel,
         public ?string $qrCaption,
+        public int $adsBeforeVideo,
+        public int $videoSegmentSeconds,
+        public string $screenFormat,
+        public int $screenWidthPx,
+        public int $screenHeightPx,
     ) {}
 
     /** @return array<string, mixed> */
@@ -31,6 +36,14 @@ final readonly class DisplayFeedDto
             'screen' => [
                 'uuid' => $this->screenUuid,
                 'name' => $this->screenName,
+                'carousel_seconds' => $this->carouselSeconds,
+                'format' => $this->screenFormat,
+                'width_px' => $this->screenWidthPx,
+                'height_px' => $this->screenHeightPx,
+            ],
+            'playback' => [
+                'ads_before_video' => $this->adsBeforeVideo,
+                'video_segment_seconds' => $this->videoSegmentSeconds,
                 'carousel_seconds' => $this->carouselSeconds,
             ],
             'layout' => [

@@ -13,14 +13,27 @@ enum AdPlacement: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::MainCarousel => 'Carrossel principal',
-            self::Sidebar1 => 'Lateral 1 (inferior)',
-            self::Sidebar2 => 'Lateral 2 (meio)',
-            self::Sidebar3 => 'Lateral 3 (superior)',
-            self::Footer1 => 'Rodapé 1',
-            self::Footer2 => 'Rodapé 2',
-        };
+        return (string) __("signage.slots.{$this->value}.label");
+    }
+
+    public function description(): string
+    {
+        return (string) __("signage.slots.{$this->value}.description");
+    }
+
+    /** @return array{width: int, height: int}|null */
+    public function recommendedSize(ScreenFormat $format): ?array
+    {
+        $spec = config("signage.slots.{$this->value}.recommended.{$format->value}");
+
+        if (! is_array($spec)) {
+            return null;
+        }
+
+        return [
+            'width' => (int) ($spec['width'] ?? 0),
+            'height' => (int) ($spec['height'] ?? 0),
+        ];
     }
 
     /** @return list<self> */

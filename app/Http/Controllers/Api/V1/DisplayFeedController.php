@@ -22,6 +22,17 @@ final class DisplayFeedController extends Controller
 
         return response()->json(
             $this->displayFeedService->buildForScreen($screen)->toArray(),
+            headers: $this->corsHeaders(),
         );
+    }
+
+    /** @return array<string, string> */
+    private function corsHeaders(): array
+    {
+        return [
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'GET, HEAD, OPTIONS',
+            'Access-Control-Allow-Headers' => 'ngrok-skip-browser-warning, Accept, Content-Type, Authorization',
+        ];
     }
 }

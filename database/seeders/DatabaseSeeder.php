@@ -25,5 +25,24 @@ class DatabaseSeeder extends Seeder
         $admin->syncRoles([$superAdminRole]);
 
         $this->call(SignageSeeder::class);
+
+        $tarziAdvertiser = \App\Models\Advertiser::query()->where('email', 'contato@tarzi.com.br')->first();
+
+        if ($tarziAdvertiser !== null) {
+            $advertiserUser = User::query()->updateOrCreate(
+                ['email' => 'anunciante@tarzi.com.br'],
+                [
+                    'name' => 'Tarzi Anunciante',
+                    'password' => Hash::make('password'),
+                    'advertiser_id' => $tarziAdvertiser->id,
+                ],
+            );
+
+            $advertiserRole = Role::findByName('advertiser', 'web');
+            $advertiserUser->syncRoles([$advertiserRole]);
+        }
+
+        // Garante que super_admin tenha todas as permissões (após shield:generate).
+        $this->call(BaseAdminRolesSeeder::class);
     }
 }

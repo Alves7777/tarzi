@@ -18,6 +18,8 @@ class AdPlacementResource extends Resource
 {
     protected static ?string $model = AdPlacement::class;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedViewColumns;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Anuncios';

@@ -3,14 +3,15 @@
 namespace App\Providers\Filament;
 
 use AchyutN\FilamentLogViewer\FilamentLogViewer;
+use App\Filament\Pages\Auth\AdminLogin;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Plugins\UiSwitcherPlugin;
 use App\Filament\Resources\Activitylog\ActivitylogResource;
 use App\Http\Middleware\ApplyLoginAppearance;
+use App\Http\Middleware\RedirectUnauthorizedPanelAccess;
 use App\Support\LoginAppearance;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Auth\Pages\Login;
-use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -38,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->login()
+            ->login(AdminLogin::class)
             ->databaseNotifications()
             ->profile(EditProfile::class, isSimple: false)
             ->colors([
@@ -77,6 +78,11 @@ class AdminPanelProvider extends PanelProvider
                 scopes: Login::class,
             )
             ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): View => view('filament.auth.anunciante-link'),
+                scopes: AdminLogin::class,
+            )
+            ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn (): View => view('filament.actions.print-listener'),
             )
@@ -95,7 +101,7 @@ class AdminPanelProvider extends PanelProvider
                 ApplyLoginAppearance::class,
             ], isPersistent: true)
             ->authMiddleware([
-                Authenticate::class,
+                RedirectUnauthorizedPanelAccess::class,
             ]);
     }
 

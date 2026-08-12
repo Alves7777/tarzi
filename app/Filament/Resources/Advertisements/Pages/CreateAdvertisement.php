@@ -4,8 +4,10 @@ namespace App\Filament\Resources\Advertisements\Pages;
 
 use App\Domain\Ads\Enums\AdMediaType;
 use App\Domain\Ads\Enums\AdPlacement as AdPlacementEnum;
+use App\Domain\Ads\Enums\AdvertisementStatus;
 use App\Filament\Resources\Advertisements\AdvertisementResource;
 use App\Models\AdPlacement;
+use App\Models\Advertisement;
 use App\Support\YoutubeUrl;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -17,21 +19,26 @@ class CreateAdvertisement extends CreateRecord
     {
         $state = $this->form->getRawState();
         $data['youtube_url'] = $state['youtube_url'] ?? null;
+        $data['status'] ??= AdvertisementStatus::Approved->value;
 
         return self::normalizeMediaPath($data);
     }
 
     protected function afterCreate(): void
     {
-        $state = $this->form->getRawState();
+        self::createInitialPlacement($this->record, $this->form->getRawState());
+    }
 
+    /** @param array<string, mixed> $state */
+    public static function createInitialPlacement(Advertisement $advertisement, array $state): void
+    {
         $placement = $state['placement_slot'] ?? AdPlacementEnum::MainCarousel->value;
         if ($placement instanceof AdPlacementEnum) {
             $placement = $placement->value;
         }
 
         AdPlacement::query()->create([
-            'advertisement_id' => $this->record->id,
+            'advertisement_id' => $advertisement->id,
             'display_screen_id' => $state['display_screen_id'] ?? null,
             'placement' => $placement,
             'sort_order' => (int) ($state['placement_sort'] ?? 0),

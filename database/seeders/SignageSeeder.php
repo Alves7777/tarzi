@@ -11,8 +11,10 @@ use App\Models\Advertiser;
 use App\Models\BillingPlan;
 use App\Models\DisplayScreen;
 use App\Models\Invoice;
+use App\Support\AdvertisementMedia;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class SignageSeeder extends Seeder
 {
@@ -203,6 +205,7 @@ class SignageSeeder extends Seeder
                 'media_path' => $demo['media_path'],
                 'duration_seconds' => $demo['duration_seconds'],
                 'is_active' => true,
+                'status' => \App\Domain\Ads\Enums\AdvertisementStatus::Approved,
             ]);
 
             AdPlacementModel::query()->create([
@@ -263,6 +266,18 @@ class SignageSeeder extends Seeder
                 File::copy($fromFlutter, $target);
             } elseif (is_file($fromLocal)) {
                 File::copy($fromLocal, $target);
+            }
+        }
+
+        if (AdvertisementMedia::disk() === 's3') {
+            foreach ($files as $file) {
+                $localPath = $destination.DIRECTORY_SEPARATOR.$file;
+                if (! is_file($localPath)) {
+                    continue;
+                }
+
+                $remotePath = AdvertisementMedia::directory().'/'.$file;
+                Storage::disk('s3')->put($remotePath, file_get_contents($localPath), 'public');
             }
         }
     }

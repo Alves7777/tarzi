@@ -8,4 +8,5 @@ return [
     ActivityLogServiceProvider::class,
     AppServiceProvider::class,
     AdminPanelProvider::class,
+    \App\Providers\Filament\AdvertiserPanelProvider::class,
 ];

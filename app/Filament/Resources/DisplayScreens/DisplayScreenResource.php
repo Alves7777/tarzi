@@ -5,6 +5,7 @@ namespace App\Filament\Resources\DisplayScreens;
 use App\Filament\Resources\DisplayScreens\Pages\CreateDisplayScreen;
 use App\Filament\Resources\DisplayScreens\Pages\EditDisplayScreen;
 use App\Filament\Resources\DisplayScreens\Pages\ListDisplayScreens;
+use App\Filament\Resources\DisplayScreens\RelationManagers\ScreenAdsRelationManager;
 use App\Filament\Resources\DisplayScreens\Schemas\DisplayScreenForm;
 use App\Filament\Resources\DisplayScreens\Tables\DisplayScreensTable;
 use App\Models\DisplayScreen;
@@ -20,11 +21,15 @@ class DisplayScreenResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTv;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Anuncios';
+    protected static string|\UnitEnum|null $navigationGroup = 'Anúncios';
 
     protected static ?string $navigationLabel = 'Telas';
 
     protected static ?string $modelLabel = 'Tela';
+
+    protected static ?string $pluralModelLabel = 'Telas';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {
@@ -39,7 +44,7 @@ class DisplayScreenResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ScreenAdsRelationManager::class,
         ];
     }
 
